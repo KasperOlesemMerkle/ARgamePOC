@@ -5,11 +5,21 @@ import {
   ViroText,
   ViroTrackingStateConstants,
   ViroARSceneNavigator,
-  ViroTrackingReason,
+  ViroTrackingReason, ViroARTrackingTargets, ViroARImageMarker, ViroBox,
 } from "@viro-community/react-viro";
+
+ViroARTrackingTargets.createTargets({
+  "gameBoard": {
+    source: require('./assets/boardgame.png'),
+    orientation: "Up",
+    physicalWidth: 0.157, // real world width in meters
+    type: 'Image'
+  },
+});
 
 const HelloWorldSceneAR = () => {
   const [text, setText] = useState("Initializing AR...");
+  const [isTracking, setIsTracking] = useState(false);
 
   function onInitialized(state: any, reason: ViroTrackingReason) {
     console.log("guncelleme", state, reason);
@@ -28,6 +38,18 @@ const HelloWorldSceneAR = () => {
         position={[0, 0, -1]}
         style={styles.helloWorldTextStyle}
       />
+      <ViroARImageMarker
+        target="gameBoard"
+        onAnchorFound={() => setIsTracking(true)}
+      >
+        {isTracking && (
+          <>
+            <ViroText text="Game Board Found!" position={[0, 0.1, 0.6]} />
+            <ViroBox position={[0, 0, 0]} scale={[0.1, 0.1, 0.1]}  />
+            <ViroBox position={[0.1, 0.1, 0.1]} scale={[0.1, 0.1, 0.1]} />
+          </>
+        )}
+      </ViroARImageMarker>
     </ViroARScene>
   );
 };
